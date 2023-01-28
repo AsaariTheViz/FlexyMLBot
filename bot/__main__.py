@@ -56,52 +56,22 @@ def stats(update, context):
     else:
         botVersion = 'No UPSTREAM_REPO'
         last_commit = 'No UPSTREAM_REPO'
-    currentTime = get_readable_time(time() - botStartTime)
-    current = now.strftime('%m/%d %I:%M:%S %p')
-    osUptime = get_readable_time(time() - boot_time())
-    total, used, free, disk= disk_usage('/')
-    total = get_readable_file_size(total)
-    used = get_readable_file_size(used)
-    free = get_readable_file_size(free)
-    sent = get_readable_file_size(net_io_counters().bytes_sent)
-    recv = get_readable_file_size(net_io_counters().bytes_recv)
-    cpuUsage = cpu_percent(interval=0.5)
-    p_core = cpu_count(logical=False)
-    t_core = cpu_count(logical=True)
-    swap = swap_memory()
-    swap_p = swap.percent
-    swap_t = get_readable_file_size(swap.total)
-    swap_u = get_readable_file_size(swap.used)
-    memory = virtual_memory()
-    mem_p = memory.percent
-    mem_t = get_readable_file_size(memory.total)
-    mem_a = get_readable_file_size(memory.available)
-    mem_u = get_readable_file_size(memory.used)
-    if config_dict['EMOJI_THEME']:
-            stats = f'<b>╭─《🌐 BOT STATISTICS 🌐》</b>\n' \
-                    f'<b>├ 🛠 Updated On: </b>{last_commit}\n'\
-                    f'<b>├ ⌛ Uptime: </b>{currentTime}\n'\
-                    f'<b>├ 🤖 Version: </b>{version}\n'\
-                    f'<b>├ 🟢 OS Uptime: </b>{osUptime}\n'\
-                    f'<b>├ 🖥️ CPU:</b> [{progress_bar(cpuUsage)}] {cpuUsage}%\n'\
-                    f'<b>├ 🎮 RAM:</b> [{progress_bar(mem_p)}] {mem_p}%\n'\
-                    f'<b>├ 💾 Disk:</b> [{progress_bar(disk)}] {disk}%\n'\
-                    f'<b>├ 💿 Disk Free:</b> {free}\n'\
-                    f'<b>├ 🔺 Upload Data:</b> {sent}\n'\
-                    f'<b>╰ 🔻 Download Data:</b> {recv}\n\n'
-
-    else:
-            stats = f'<b>╭─《🌐 BOT STATISTICS 🌐》</b>\n' \
-                    f'<b>├  Updated On: </b>{last_commit}\n'\
-                    f'<b>├  Uptime: </b>{currentTime}\n'\
-                    f'<b>├  Version: </b>{version}\n'\
-                    f'<b>├  OS Uptime: </b>{osUptime}\n'\
-                    f'<b>├  CPU:</b> [{progress_bar(cpuUsage)}] {cpuUsage}%\n'\
-                    f'<b>├  RAM:</b> [{progress_bar(mem_p)}] {mem_p}%\n'\
-                    f'<b>├  Disk:</b> [{progress_bar(disk)}] {disk}%\n'\
-                    f'<b>├  Disk Free:</b> {free}\n'\
-                    f'<b>├  Upload Data:</b> {sent}\n'\
-                    f'<b>╰  Download Data:</b> {recv}\n\n'
+    stats = f'<b>Commit Date</b>: {last_commit}\n\n'\
+            f'<b>Bot Uptime</b>: {get_readable_time(time() - botStartTime)}\n'\
+            f'<b>OS Uptime</b>: {get_readable_time(time() - boot_time())}\n\n'\
+            f'<b>Total Disk Space </b>: {get_readable_file_size(total)}\n'\
+            f'<b>Used</b>: {get_readable_file_size(used)} | <b>Free</b>: {get_readable_file_size(free)}\n\n'\
+            f'<b>Upload</b>: {get_readable_file_size(net_io_counters().bytes_sent)}\n'\
+            f'<b>Download</b>: {get_readable_file_size(net_io_counters().bytes_recv)}\n\n'\
+            f'<b>CPU</b>: {cpu_percent(interval=0.5)}%\n'\
+            f'<b>RAM</b>: {memory.percent}%\n'\
+            f'<b>DISK</b>: {disk}%\n\n'\
+            f'<b>Physical Cores</b>: {cpu_count(logical=False)}\n'\
+            f'<b>Total Cores</b>: {cpu_count(logical=True)}\n\n'\
+            f'<b>SWAP</b>: {get_readable_file_size(swap.total)} | <b>Used</b>: {swap.percent}%\n'\
+            f'<b>Memory Total</b>: {get_readable_file_size(memory.total)}\n'\
+            f'<b>Memory Free</b>: {get_readable_file_size(memory.available)}\n'\
+            f'<b>Memory Used</b>: {get_readable_file_size(memory.used)}\n'
 
 
 
