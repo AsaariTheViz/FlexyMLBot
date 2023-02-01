@@ -6,6 +6,7 @@ from random import choice as rchoice
 from os import path as ospath, remove as osremove, execl as osexecl
 from subprocess import run as srun, check_output
 from datetime import datetime
+from platform import system, architecture, release
 from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, boot_time
 from time import time
 from sys import executable
@@ -56,23 +57,76 @@ def stats(update, context):
     else:
         botVersion = 'No UPSTREAM_REPO'
         last_commit = 'No UPSTREAM_REPO'
-    stats = f'<b>Commit Date</b>: {last_commit}\n\n'\
-            f'<b>Bot Uptime</b>: {get_readable_time(time() - botStartTime)}\n'\
-            f'<b>OS Uptime</b>: {get_readable_time(time() - boot_time())}\n\n'\
-            f'<b>Total Disk Space </b>: {get_readable_file_size(total)}\n'\
-            f'<b>Used</b>: {get_readable_file_size(used)} | <b>Free</b>: {get_readable_file_size(free)}\n\n'\
-            f'<b>Upload</b>: {get_readable_file_size(net_io_counters().bytes_sent)}\n'\
-            f'<b>Download</b>: {get_readable_file_size(net_io_counters().bytes_recv)}\n\n'\
-            f'<b>CPU</b>: {cpu_percent(interval=0.5)}%\n'\
-            f'<b>RAM</b>: {memory.percent}%\n'\
-            f'<b>DISK</b>: {disk}%\n\n'\
-            f'<b>Physical Cores</b>: {cpu_count(logical=False)}\n'\
-            f'<b>Total Cores</b>: {cpu_count(logical=True)}\n\n'\
-            f'<b>SWAP</b>: {get_readable_file_size(swap.total)} | <b>Used</b>: {swap.percent}%\n'\
-            f'<b>Memory Total</b>: {get_readable_file_size(memory.total)}\n'\
-            f'<b>Memory Free</b>: {get_readable_file_size(memory.available)}\n'\
-            f'<b>Memory Used</b>: {get_readable_file_size(memory.used)}\n'
+    currentTime = get_readable_time(time() - botStartTime)
+    current = now.strftime('%m/%d %I:%M:%S %p')
+    osUptime = get_readable_time(time() - boot_time())
+    total, used, free, disk= disk_usage('/')
+    total = get_readable_file_size(total)
+    used = get_readable_file_size(used)
+    free = get_readable_file_size(free)
+    sent = get_readable_file_size(net_io_counters().bytes_sent)
+    recv = get_readable_file_size(net_io_counters().bytes_recv)
+    cpuUsage = cpu_percent(interval=0.5)
+    p_core = cpu_count(logical=False)
+    t_core = cpu_count(logical=True)
+    swap = swap_memory()
+    swap_p = swap.percent
+    swap_t = get_readable_file_size(swap.total)
+    swap_u = get_readable_file_size(swap.used)
+    memory = virtual_memory()
+    mem_p = memory.percent
+    mem_t = get_readable_file_size(memory.total)
+    mem_a = get_readable_file_size(memory.available)
+    mem_u = get_readable_file_size(memory.used)
+    if config_dict['EMOJI_THEME']:
+            stats = f'''
+<b>BOT STATISTICS 📊</b>
+<b>┌ Commit Date:</b> {last_commit}
+<b>├ Bot Uptime:</b> {get_readable_time(time() - botStartTime)}
+<b>└ OS Uptime:</b> {get_readable_time(time() - boot_time())}\n
+<b>SYSTEM STATS 🧮 </b>
+<b>┌ SWAP:</b> {get_readable_file_size(swap_memory().total)}
+<b>├ Total Cores:</b> {cpu_count(logical=True)}
+<b>├ Physical Cores:</b> {cpu_count(logical=False)}
+<b>├ Upload:</b> {get_readable_file_size(net_io_counters().bytes_sent)}
+<b>├ Download:</b> {get_readable_file_size(net_io_counters().bytes_recv)}
+<b>├ Disk Free:</b> {get_readable_file_size(disk_usage("/")[2])}
+<b>├ Disk Used:</b> {get_readable_file_size(disk_usage("/")[1])}
+<b>├ Disk Total:</b> {get_readable_file_size(disk_usage("/")[0])}
+<b>├ Memory Free:</b> {get_readable_file_size(virtual_memory().available)}
+<b>├ Memory Used:</b> {get_readable_file_size(virtual_memory().used)}
+<b>├ Memory Total:</b> {get_readable_file_size(virtual_memory().total)}
+<b>├ CPU:</b> {progress_bar(cpu_percent(interval=1))} {cpu_percent(interval=1)}%
+<b>├ RAM:</b> {progress_bar(virtual_memory().percent)} {virtual_memory().percent}%
+<b>├ DISK:</b> {progress_bar(disk_usage("/")[3])} {disk_usage("/")[3]}%
+<b>├ SWAP:</b> {progress_bar(swap_memory().percent)} {swap_memory().percent}%
+<b>└ OS:</b> {system()}, {architecture()[0]}, {release()}\n
+'''
 
+    else:
+            stats = f'''
+<b>BOT STATISTICS 📊</b>
+<b>┌ Commit Date:</b> {last_commit}
+<b>├ Bot Uptime:</b> {get_readable_time(time() - botStartTime)}
+<b>└ OS Uptime:</b> {get_readable_time(time() - boot_time())}\n
+<b>SYSTEM STATS 🧮</b>
+<b>┌ SWAP:</b> {get_readable_file_size(swap_memory().total)}
+<b>├ Total Cores:</b> {cpu_count(logical=True)}
+<b>├ Physical Cores:</b> {cpu_count(logical=False)}
+<b>├ Upload:</b> {get_readable_file_size(net_io_counters().bytes_sent)}
+<b>├ Download:</b> {get_readable_file_size(net_io_counters().bytes_recv)}
+<b>├ Disk Free:</b> {get_readable_file_size(disk_usage("/")[2])}
+<b>├ Disk Used:</b> {get_readable_file_size(disk_usage("/")[1])}
+<b>├ Disk Total:</b> {get_readable_file_size(disk_usage("/")[0])}
+<b>├ Memory Free:</b> {get_readable_file_size(virtual_memory().available)}
+<b>├ Memory Used:</b> {get_readable_file_size(virtual_memory().used)}
+<b>├ Memory Total:</b> {get_readable_file_size(virtual_memory().total)}
+<b>├ CPU:</b> {progress_bar(cpu_percent(interval=1))} {cpu_percent(interval=1)}%
+<b>├ RAM:</b> {progress_bar(virtual_memory().percent)} {virtual_memory().percent}%
+<b>├ DISK:</b> {progress_bar(disk_usage("/")[3])} {disk_usage("/")[3]}%
+<b>├ SWAP:</b> {progress_bar(swap_memory().percent)} {swap_memory().percent}%
+<b>└ OS:</b> {system()}, {architecture()[0]}, {release()}\n
+'''
 
 
     if config_dict['SHOW_LIMITS_IN_STATS']:
@@ -93,7 +147,7 @@ def stats(update, context):
         total_task = 'No Limit Set' if TOTAL_TASKS_LIMIT == '' else f'{TOTAL_TASKS_LIMIT} Total Tasks/Time'
         user_task = 'No Limit Set' if USER_TASKS_LIMIT == '' else f'{USER_TASKS_LIMIT} Tasks/user'
 
-        if config_dict['EMOJI_THEME']: 
+        if config_dict['EMOJI_THEME']:
             stats += f'<b>╭─《 ⚠️ BOT LIMITS ⚠️ 》</b>\n'\
                      f'<b>├ 🧲 Torrent/Direct: </b>{torrent_direct}\n'\
                      f'<b>├ 🔐 Zip/Unzip: </b>{zip_unzip}\n'\
@@ -102,7 +156,7 @@ def stats(update, context):
                      f'<b>├ 🔰 Mega: </b>{mega_limit}\n'\
                      f'<b>├ 💣 Total Tasks: </b>{total_task}\n'\
                      f'<b>╰ 🔫 User Tasks: </b>{user_task}\n\n'
-        else: 
+        else:
             stats += f'<b>╭─《 ⚠️ BOT LIMITS ⚠️ 》</b>\n'\
                      f'<b>├  Torrent/Direct: </b>{torrent_direct}\n'\
                      f'<b>├  Zip/Unzip: </b>{zip_unzip}\n'\
@@ -364,7 +418,7 @@ def main():
             for page in range(1,20):
                 r2 = rget(f"https://www.wallpaperflare.com/search?wallpaper={config_dict['WALLFLARE_SEARCH']}&width=1280&height=720&page={page}")
                 soup2 = BeautifulSoup(r2.text, "html.parser")
-                x = soup2.select('img[data-src^="https://c4.wallpaperflare.com/wallpaper"]')  
+                x = soup2.select('img[data-src^="https://c4.wallpaperflare.com/wallpaper"]')
                 for img in x:
                     config_dict['PICS'].append(img['data-src'])
         except Exception as err:
@@ -440,7 +494,7 @@ def main():
             msg += f"📅 DATE: {date}\n"
             msg += f"⌚ TIME: {time}\n"
             msg += f"🌐 TIMEZONE: {timez}\n"
-            msg += f"🤖 VERSION: {version}"            
+            msg += f"🤖 VERSION: {version}"
             bot.edit_message_text(msg, chat_id, msg_id)
         except Exception as e:
             LOGGER.info(e)
