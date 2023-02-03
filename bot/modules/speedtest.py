@@ -38,7 +38,6 @@ def speedtest(update, context):
 ╰ <b>Longitude:</b> <code>{result['server']['lon']}</code>
 
 ╭─《 👤 CLIENT DETAILS 》
-├ <b>IP Address:</b> <code>{result['client']['ip']}</code>
 ├ <b>Latitude:</b> <code>{result['client']['lat']}</code>
 ├ <b>Longitude:</b> <code>{result['client']['lon']}</code>
 ├ <b>Country:</b> <code>{result['client']['country']}</code>
